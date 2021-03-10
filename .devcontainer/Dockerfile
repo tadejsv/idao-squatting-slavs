@@ -6,7 +6,8 @@ COPY env.yml /
 COPY .devcontainer/env_dev.yml /
 RUN micromamba install -y -n base -f /env.yml && \
     micromamba install -y -n base -f /env_dev.yml && \
-    rm /opt/conda/pkgs/cache/*
+    pip install timm && \
+    micromamba clean
 
 FROM nvidia/cuda:${CUDA_VERSION}-base-ubuntu${UBUNTU_VERSION}
 
@@ -37,6 +38,8 @@ COPY --from=conda --chown=$USERNAME /opt/ /opt/
 RUN sudo ln -s /opt/conda/etc/profile.d/mamba.sh /etc/profile.d/mamba.sh && \
     echo ". /opt/conda/etc/profile.d/mamba.sh" >> ~/.bashrc && \
     echo "micromamba activate base" >> ~/.bashrc
+ENV MAMBA_EXE="/bin/micromamba"
+ENV MAMBA_ROOT_PREFIX="/opt/conda"
 
 # Jupyter config
 COPY --chown=$USERNAME .devcontainer/jupyter_lab_config.py $HOME/.jupyter/ 
