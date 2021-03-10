@@ -1,6 +1,6 @@
 ARG UBUNTU_VERSION=20.04
 ARG CUDA_VERSION=11.1
-FROM mambaforge/micromamba AS conda
+FROM mambaorg/micromamba AS conda
 
 COPY env.yml /root
 COPY .devcontainer/env_dev.yml /root
