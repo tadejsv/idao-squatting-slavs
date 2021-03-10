@@ -1,5 +1,5 @@
 ARG UBUNTU_VERSION=20.04
-ARG CUDA_VERSION=11.0
+ARG CUDA_VERSION=11.1
 FROM continuumio/miniconda3 AS conda
 
 COPY env.yml /
