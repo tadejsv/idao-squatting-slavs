@@ -2,10 +2,10 @@ ARG UBUNTU_VERSION=20.04
 ARG CUDA_VERSION=11.1
 FROM mambaorg/micromamba AS conda
 
-COPY env.yml /root
-COPY .devcontainer/env_dev.yml /root
-RUN micromamba install -y -n base -f /root/env.yaml && \
-    micromamba install -y -n base -f /root/env_dev.yaml && \
+COPY env.yml /
+COPY .devcontainer/env_dev.yml /
+RUN micromamba install -y -n base -f /env.yml && \
+    micromamba install -y -n base -f /env_dev.yml && \
     rm /opt/conda/pkgs/cache/*
 
 FROM nvidia/cuda:${CUDA_VERSION}-base-ubuntu${UBUNTU_VERSION}
@@ -32,10 +32,11 @@ ENV HOME=/home/$USERNAME
 RUN sudo mkdir /ws && sudo chown -R $USERNAME /ws
 
 # Copy over conda and bashrc, install environment
+COPY --from=conda /bin/micromamba /bin/micromamba
 COPY --from=conda --chown=$USERNAME /opt/ /opt/
-COPY --from=conda --chown=$USERNAME /bin/micromamba /bin/micromamba
-RUN /bin/micromamba shell init -s bash -p /opt/conda && \
-    echo "micromamba activate base" >> /root/.bashrc
+RUN sudo ln -s /opt/conda/etc/profile.d/mamba.sh /etc/profile.d/mamba.sh && \
+    echo ". /opt/conda/etc/profile.d/mamba.sh" >> ~/.bashrc && \
+    echo "micromamba activate base" >> ~/.bashrc
 
 # Jupyter config
 COPY --chown=$USERNAME .devcontainer/jupyter_lab_config.py $HOME/.jupyter/ 

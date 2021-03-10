@@ -1,16 +1,20 @@
 # 🥇 IDAO Squatting Slavs 🏆
 
 - [🥇 IDAO Squatting Slavs 🏆](#-idao-squatting-slavs-)
-  - [Quickstart: local](#quickstart-local)
-  - [Quickstart: remote](#quickstart-remote)
+  - [Devcontainer](#devcontainer)
+    - [Quickstart: local](#quickstart-local)
+    - [Quickstart: remote](#quickstart-remote)
 
-## Quickstart: local
+
+## Devcontainer
+
+### Quickstart: local
 
 This assumes that all your files are on a local machine, where you also want to run the container. If you want to run the container on a remote machine, check out the [remote](#quickstart-remote) section.
 
 All you need to do is to open the repository in VSCode, press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> and type/select "Reopen in Container".
 
-## Quickstart: remote
+### Quickstart: remote
 
 This instructions are for the following scenario: your files and credentials are on a remote **host** machine (such as an AWS server, desktop workstation), and the only use of your **local** machine is to connect to the host. It is required that you have **the same username** on both local and host machine.
 
