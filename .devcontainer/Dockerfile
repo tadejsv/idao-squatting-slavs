@@ -1,13 +1,12 @@
 ARG UBUNTU_VERSION=20.04
 ARG CUDA_VERSION=11.1
-FROM continuumio/miniconda3 AS conda
+FROM mambaforge/micromamba AS conda
 
-COPY env.yml /
-COPY .devcontainer/env_dev.yml /
-RUN conda update conda -c conda-forge && \
-    conda env update -f /env.yml -n base && \
-    conda env update -f /env_dev.yml -n base && \
-    conda clean -afy
+COPY env.yml /root
+COPY .devcontainer/env_dev.yml /root
+RUN micromamba install -y -n base -f /root/env.yaml && \
+    micromamba install -y -n base -f /root/env_dev.yaml && \
+    rm /opt/conda/pkgs/cache/*
 
 FROM nvidia/cuda:${CUDA_VERSION}-base-ubuntu${UBUNTU_VERSION}
 
@@ -34,9 +33,9 @@ RUN sudo mkdir /ws && sudo chown -R $USERNAME /ws
 
 # Copy over conda and bashrc, install environment
 COPY --from=conda --chown=$USERNAME /opt/ /opt/
-RUN sudo ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
+COPY --from=conda --chown=$USERNAME /bin/micromamba /bin/micromamba
+RUN /bin/micromamba shell init -s bash -p /opt/conda && \
+    echo "micromamba activate base" >> /root/.bashrc
 
 # Jupyter config
 COPY --chown=$USERNAME .devcontainer/jupyter_lab_config.py $HOME/.jupyter/ 
