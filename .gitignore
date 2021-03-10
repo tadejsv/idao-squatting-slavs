@@ -145,3 +145,4 @@ outputs/
 multirun/
 
 # DVC
+/idao_dataset

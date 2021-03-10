@@ -1,0 +1,6 @@
+[cache]
+    dir = /opt/dvc/cache
+[core]
+    remote = s3
+['remote "s3"']
+    url = s3://idao-squatting-slavs
