@@ -144,5 +144,8 @@ cython_debug/
 outputs/
 multirun/
 
+# Dev notebooks
+*dev.ipynb
+
 # DVC
 /idao_dataset
