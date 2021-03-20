@@ -4,8 +4,9 @@ FROM mambaorg/micromamba AS conda
 
 COPY env.yml /
 COPY .devcontainer/env_dev.yml /
-RUN micromamba install -y -n base -f /env.yml && \
-    micromamba install -y -n base -f /env_dev.yml && \
+RUN micromamba create -n idao && micromamba activate idao && \
+    micromamba install -y -n idao -f /env.yml && \
+    micromamba install -y -n idao -f /env_dev.yml && \
     pip install timm && \
     micromamba clean
 
@@ -37,7 +38,7 @@ COPY --from=conda /bin/micromamba /bin/micromamba
 COPY --from=conda --chown=$USERNAME /opt/ /opt/
 RUN sudo ln -s /opt/conda/etc/profile.d/mamba.sh /etc/profile.d/mamba.sh && \
     echo ". /opt/conda/etc/profile.d/mamba.sh" >> ~/.bashrc && \
-    echo "micromamba activate base" >> ~/.bashrc
+    echo "micromamba activate idao" >> ~/.bashrc
 ENV MAMBA_EXE="/bin/micromamba"
 ENV MAMBA_ROOT_PREFIX="/opt/conda"
 
