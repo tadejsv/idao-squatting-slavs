@@ -13,7 +13,8 @@
         "redhat.vscode-yaml",
     ],
     "settings": {
-        "python.pythonPath": "/opt/conda/bin/python",
+        "remote.autoForwardPorts": false,
+        "python.pythonPath": "/opt/conda/bin/idao/python",
         "python.formatting.provider": "black",
         "python.formatting.blackArgs": [
             "--line-length",

@@ -44,13 +44,15 @@ class IDAOData(torch.utils.data.dataset.Dataset):
         return len(self.image_files)
 
 
+CENTER = 120
 NORM_MEAN = 0.3938
-NORM_STD = 0.015
+NORM_STD = 0.15
 
 
 def train_transforms() -> Any:
     transforms = A.Compose(
         [
+            A.CenterCrop(CENTER, CENTER),
             A.Flip(p=0.5),
             A.RandomRotate90(p=0.5),
             A.Normalize(mean=NORM_MEAN, std=NORM_STD),
@@ -63,6 +65,7 @@ def train_transforms() -> Any:
 def val_transforms() -> Any:
     transforms = A.Compose(
         [
+            A.CenterCrop(CENTER, CENTER),
             A.Normalize(mean=NORM_MEAN, std=NORM_STD),
         ]
     )
