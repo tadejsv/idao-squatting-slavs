@@ -7,3 +7,4 @@ wget
 unzip
 openssh-server
 nano
+libgl1-mesa-glx

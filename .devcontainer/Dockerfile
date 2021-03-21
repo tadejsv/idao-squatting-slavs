@@ -4,10 +4,9 @@ FROM mambaorg/micromamba AS conda
 
 COPY env.yml /
 COPY .devcontainer/env_dev.yml /
-RUN micromamba create -n idao && micromamba activate idao && \
-    micromamba install -y -n idao -f /env.yml && \
+RUN micromamba create -n idao -f /env.yml && \
     micromamba install -y -n idao -f /env_dev.yml && \
-    pip install timm && \
+    micromamba activate idao && pip install timm && \
     micromamba clean
 
 FROM nvidia/cuda:${CUDA_VERSION}-base-ubuntu${UBUNTU_VERSION}
