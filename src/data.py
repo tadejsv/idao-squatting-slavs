@@ -30,7 +30,7 @@ class IDAOData(torch.utils.data.dataset.Dataset):
 
         return r_type, energy
 
-    def __getitem__(self, index: int) -> Tuple[np.array, int, int]:
+    def __getitem__(self, index: int) -> Tuple[np.ndarray, int, int]:
         image = cv2.imread(str(self.image_files[index]), 0)
         if self.transform:
             image = self.transform(image=image)["image"]
