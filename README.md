@@ -1,9 +1,49 @@
 # 🥇 IDAO Squatting Slavs 🏆
 
 - [🥇 IDAO Squatting Slavs 🏆](#-idao-squatting-slavs-)
+  - [Data and EDA](#data-and-eda)
   - [Devcontainer](#devcontainer)
     - [Quickstart: local](#quickstart-local)
     - [Quickstart: remote](#quickstart-remote)
+
+
+## Data and EDA
+
+The original data folder looks like this:
+
+```
+idao_dataset
+├── private_test
+├── public_test
+└── train
+    ├── ER
+    └── NR
+```
+
+The classes (type and energy) can be deduced form file names, which are like this
+
+```
+-0.9444000124931335__CYGNO_60_40_He_NR_10_keV_930V_30cm_SRIM_IDAO_iso_crop_hist_pic_run4_ev0;1.png
+```
+
+The `NR_10` part is what is important. I split this training data into train/val/test on a 90/5/5 split, and additionally create a `test_holdout` folder for those few cases of class combinations that are hardly present in the test set. This is done in the `dev_data.ipynb` notebook. So the new data structure looks like this
+
+```
+data
+├── test
+├── test_holdout
+├── train
+└── val
+```
+
+Here's a few examples of each class:
+
+![Classes](_assets/classes.png)
+
+And here's a matrix showing all combinations
+
+![Class combinations](_assets/comb_classes.png)
+
 
 
 ## Devcontainer
