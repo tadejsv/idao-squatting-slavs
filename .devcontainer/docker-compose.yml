@@ -8,6 +8,7 @@ services:
         USERNAME: ${USER}
         UID: ${UID}
     runtime: nvidia
+    ipc: host
     volumes:
       - ${HOME}/.aws:${HOME}/.aws:ro
       - ${HOME}/.ssh:${HOME}/.ssh:ro

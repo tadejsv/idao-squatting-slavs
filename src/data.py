@@ -35,6 +35,9 @@ class IDAOData(torch.utils.data.dataset.Dataset):
         if self.transform:
             image = self.transform(image=image)["image"]
 
+        # Add extra channel dimension
+        image = np.expand_dims(image, 0)
+
         r_type = int(self.classes[index][0] == "NR")
         energy = self.classes[index][1]
 
