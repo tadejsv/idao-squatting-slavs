@@ -38,10 +38,38 @@ class IDAOData(torch.utils.data.dataset.Dataset):
         # Add extra channel dimension
         image = np.expand_dims(image, 0)
 
-        r_type = int(self.classes[index][0] == "NR")
+        r_type = int(self.classes[index][0] == "ER")
         energy = self.classes[index][1]
 
         return image, r_type, energy
+
+    def __len__(self) -> int:
+        return len(self.image_files)
+
+
+class IDAODataTest(torch.utils.data.dataset.Dataset):
+    """Loads images from IDAO public / private dataset in numpy format."""
+
+    def __init__(self, folder: Union[Path, str], transform: Optional[Any] = None):
+
+        image_files = []
+        for file in Path(folder).glob("**/*.png"):
+            image_files.append(file)
+
+        self.image_files = image_files
+        self.transform = transform
+
+    def __getitem__(self, index: int) -> np.ndarray:
+        image = cv2.imread(str(self.image_files[index]), 0)
+        # Remove path to image and fromat '.png'
+        idx = str(self.image_files[index]).split('/')[-1][:-4]
+        if self.transform:
+            image = self.transform(image=image)["image"]
+
+        # Add extra channel dimension
+        image = np.expand_dims(image, 0)
+
+        return idx, image
 
     def __len__(self) -> int:
         return len(self.image_files)
