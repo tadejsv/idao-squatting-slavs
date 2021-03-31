@@ -7,30 +7,19 @@ import cv2
 import numpy as np
 import torch
 
-IMG_SIZE = 576
-IMG_FINAL_SIZE = 120
-
-def load_image(fname):
-    img = cv2.imread(str(fname), 0)
-    slc =  slice(576 // 2 - IMG_FINAL_SIZE // 2, 576 // 2 + IMG_FINAL_SIZE // 2)
-    return img[slc, slc]
-
 
 class IDAOData(torch.utils.data.dataset.Dataset):
     """Loads images from IDAO train dataset in numpy format."""
 
-    def __init__(self, folder: Union[Path, str], transform: Optional[Any] = None, *, is_train=True,):
-        self.is_train = is_train
+    def __init__(self, folder: Union[Path, str], transform: Optional[Any] = None):
         image_files, classes = [], []
         for file in Path(folder).glob("**/*.png"):
             image_files.append(file)
-            classes.append(self._get_classes(file) if is_train else ('NA', -1))
+            classes.append(self._get_classes(file))
 
         self.image_files = image_files
         self.classes = classes
         self.transform = transform
-        self.list_images = [load_image(self.image_files[i]) for i in range(len(self))]
-
 
     @staticmethod
     def _get_classes(file_name: Path) -> Tuple[int, int]:
@@ -40,20 +29,19 @@ class IDAOData(torch.utils.data.dataset.Dataset):
 
         return r_type, energy
 
-    def __getitem__(self, index: int) -> Tuple[np.ndarray, int, int]:
-        image = self.list_images[index]
+    def __getitem__(self, index: int) -> Tuple[np.ndarray, int, int, str]:
+        image = cv2.imread(str(self.image_files[index]), 0)
         if self.transform:
             image = self.transform(image=image)["image"]
 
         # Add extra channel dimension
         image = np.expand_dims(image, 0)
 
-        r_type = int(self.classes[index][0] == "ER") if self.is_train else -1
+        r_type = int(self.classes[index][0] == "ER")
         energy = self.classes[index][1]
+        fname = self.image_files[index].name
 
-        idx = str(self.image_files[index]).split('/')[-1][:-4]
-
-        return image, r_type, energy, idx
+        return image, r_type, energy, fname
 
     def __len__(self) -> int:
         return len(self.image_files)
@@ -70,19 +58,17 @@ class IDAODataTest(torch.utils.data.dataset.Dataset):
 
         self.image_files = image_files
         self.transform = transform
-        self.list_images = [load_image(self.image_files[i]) for i in range(len(self))]
 
-    def __getitem__(self, index: int) -> np.ndarray:
-        image = self.list_images[index]
-        # Remove path to image and fromat '.png'
-        idx = str(self.image_files[index]).split('/')[-1][:-4]
+    def __getitem__(self, index: int) -> Tuple[np.ndarray, str]:
+        image = cv2.imread(str(self.image_files[index]), 0)
         if self.transform:
             image = self.transform(image=image)["image"]
 
         # Add extra channel dimension
         image = np.expand_dims(image, 0)
+        fname = self.image_files[index].name
 
-        return idx, image
+        return image, fname
 
     def __len__(self) -> int:
         return len(self.image_files)
@@ -94,7 +80,6 @@ NORM_STD = 0.15
 
 
 def train_transforms(center=CENTER) -> Any:
-    assert center <= IMG_FINAL_SIZE
     transforms = A.Compose(
         [
             A.CenterCrop(center, center),
@@ -108,7 +93,6 @@ def train_transforms(center=CENTER) -> Any:
 
 
 def val_transforms(center=CENTER) -> Any:
-    assert center <= IMG_FINAL_SIZE
     transforms = A.Compose(
         [
             A.CenterCrop(center, center),
